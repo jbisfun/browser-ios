@@ -24,7 +24,6 @@ struct BrowserView: View {
                     if let tab = model.current {
                         if let page = tab.page {
                             PageView(page: page)
-                                .ignoresSafeArea(edges: .bottom)
                         } else {
                             // The page is made outside the view update (it starts loading at once).
                             palette.backgroundColor.task(id: tab.id) { _ = model.page(for: tab) }
@@ -117,7 +116,7 @@ struct TitleBar: View {
         let tint = incognito ? Color.white : palette.textColor
         HStack(spacing: 0) {
             if !editing { CloseAppButton() }
-            HStack(spacing: 6) {
+            HStack(spacing: 10) {
                 if editing {
                     Image(systemName: "magnifyingglass").foregroundStyle(tint.opacity(0.6)).frame(width: 22)
                 } else if incognito {
@@ -134,7 +133,7 @@ struct TitleBar: View {
                     editing = false
                     model.load(submitted)
                 }
-                .frame(height: 36)
+                .frame(height: 44)
                 if editing {
                     if !input.isEmpty {
                         Button { input = "" } label: {
@@ -145,15 +144,17 @@ struct TitleBar: View {
                     Button {
                         if state.isLoading { model.current?.page?.stop() } else { model.current?.page?.reload() }
                     } label: {
-                        Image(systemName: state.isLoading ? "xmark" : "arrow.clockwise").font(.system(size: 15))
-                            .foregroundStyle(tint).frame(width: 30, height: 36)
+                        Image(systemName: state.isLoading ? "xmark" : "arrow.clockwise").font(.system(size: 16))
+                            .foregroundStyle(tint).frame(width: 36, height: 44)
                     }
                 }
             }
-            .padding(.horizontal, 10)
-            .background(RoundedRectangle(cornerRadius: 18).fill(tint.opacity(0.08)))
-            .padding(.leading, editing ? 8 : 0)
-            .padding(.vertical, 6)
+            .padding(.leading, 14)
+            .padding(.trailing, editing ? 14 : 4)
+            .background(Capsule().fill(tint.opacity(0.08)))
+            .padding(.leading, editing ? 8 : 12)
+            .padding(.trailing, editing ? 0 : 6)
+            .padding(.vertical, 8)
             if editing {
                 Button("Cancel") {
                     editing = false
@@ -167,14 +168,14 @@ struct TitleBar: View {
                         .font(.system(size: 13, weight: .bold))
                         .frame(width: 22, height: 22)
                         .overlay(RoundedRectangle(cornerRadius: 4).stroke(tint, lineWidth: 2))
-                        .frame(width: 44, height: 48)
+                        .frame(width: 48, height: 48)
                 }
                 .foregroundStyle(tint)
                 BrowserMenu(finding: $finding, pageInfo: $pageInfo).foregroundStyle(tint)
             }
         }
-        .padding(.horizontal, 4)
-        .frame(height: 56)
+        .padding(.trailing, 6)
+        .frame(height: 64)
         .background((incognito ? Color(white: 0.2) : palette.backgroundColor).ignoresSafeArea(edges: .top))
         .onChange(of: editing) { _, on in if on { input = editText } }
         .onChange(of: model.current?.state.url) { _, _ in if !editing { input = displayText } }
@@ -276,8 +277,8 @@ struct FindBar: View {
             IconButton(icon: "chevron.up") { step(true) }.disabled(result.1 == 0)
             IconButton(icon: "chevron.down") { step(false) }.disabled(result.1 == 0)
         }
-        .padding(.horizontal, 4)
-        .frame(height: 56)
+        .padding(.horizontal, 6)
+        .frame(height: 64)
         .background(palette.backgroundColor.ignoresSafeArea(edges: .top))
         .onAppear { focused = true }
         .onChange(of: text) { _, value in

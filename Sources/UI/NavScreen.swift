@@ -34,8 +34,8 @@ struct NavScreen: View {
                     } label: { Label("Settings", systemImage: "gearshape") }
                 }
             }
-            .padding(.horizontal, 4)
-            .frame(height: 56)
+            .padding(.horizontal, 8)
+            .frame(height: 64)
             ScrollViewReader { proxy in
                 let horizontal = vertical == .compact
                 ScrollView(horizontal ? .horizontal : .vertical) {
@@ -44,9 +44,9 @@ struct NavScreen: View {
                             .id(tab.id)
                     }
                     if horizontal {
-                        LazyHStack(spacing: 16) { cards }.padding(16)
+                        LazyHStack(spacing: 20) { cards }.padding(20)
                     } else {
-                        LazyVStack(spacing: 16) { cards }.padding(16)
+                        LazyVStack(spacing: 20) { cards }.padding(.horizontal, 20).padding(.vertical, 16)
                     }
                 }
                 .onAppear { proxy.scrollTo(model.current?.id, anchor: .center) }
@@ -84,8 +84,8 @@ struct NavTabCard: View {
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.leading, 10)
-            .frame(height: 40)
+            .padding(.leading, 14)
+            .frame(height: 48)
             .background(barColor)
             ZStack {
                 Color.white
@@ -98,7 +98,7 @@ struct NavTabCard: View {
             }
             .clipped()
         }
-        .frame(width: horizontal ? 260 : nil, height: horizontal ? 220 : 240)
+        .frame(width: horizontal ? 280 : nil, height: horizontal ? 240 : 280)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(current ? palette.primaryColor : palette.divider, lineWidth: current ? 3 : 1))
         .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
