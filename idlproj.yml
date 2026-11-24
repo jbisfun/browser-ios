@@ -1,0 +1,70 @@
+# Fossify Browser for iOS (port of the AOSP Browser). Build with `idl build -c release` (see README.md).
+toolchain:
+  sdk_bundle: ~/.swiftpm/swift-sdks/darwin.artifactbundle
+  swiftly_bin: ~/.local/share/swiftly/bin
+  swiftc: swiftc
+  ldid: ldid
+  actool: idl-actool
+
+targets:
+  - name: FossifyBrowser
+    bundle_id: org.fossify.browser.ios
+    version: "1.0.0"
+    build_number: "1"
+    min_ios: "17.0"
+    device_family: "1,2"
+    link: [BrowserKit, FossifyCommons]
+    sources: [App]
+    resources: [Resources/Assets.xcassets]
+    frameworks: [SwiftUI, UIKit, Foundation, WebKit, CoreLocation]
+    swift_version: "5.0"
+    info:
+      CFBundleDisplayName: Browser
+      NSAppTransportSecurity:
+        NSAllowsArbitraryLoadsInWebContent: true
+      NSLocationWhenInUseUsageDescription: Websites you allow can use your location.
+      NSCameraUsageDescription: Websites you allow can use the camera.
+      NSMicrophoneUsageDescription: Websites you allow can use the microphone.
+      NSPhotoLibraryAddUsageDescription: Save images from web pages to your photos.
+      UIFileSharingEnabled: true
+      LSSupportsOpeningDocumentsInPlace: false
+      UIApplicationSceneManifest:
+        UIApplicationSupportsMultipleScenes: false
+      UISupportedInterfaceOrientations:
+        - UIInterfaceOrientationPortrait
+        - UIInterfaceOrientationLandscapeLeft
+        - UIInterfaceOrientationLandscapeRight
+      UISupportedInterfaceOrientations~ipad:
+        - UIInterfaceOrientationPortrait
+        - UIInterfaceOrientationPortraitUpsideDown
+        - UIInterfaceOrientationLandscapeLeft
+        - UIInterfaceOrientationLandscapeRight
+      CFBundleDocumentTypes:
+        - CFBundleTypeName: HTML
+          LSHandlerRank: Alternate
+          LSItemContentTypes: [public.html, public.xhtml]
+        - CFBundleTypeName: Web archive
+          LSHandlerRank: Alternate
+          LSItemContentTypes: [com.apple.webarchive]
+    configurations:
+      debug:
+        entitlements:
+          get-task-allow: true
+
+  # Everything but the app entry point; also linked by the launcher (fossify-ios/launcher-ios).
+  - name: BrowserKit
+    type: static
+    min_ios: "17.0"
+    link: [FossifyCommons]
+    sources: [Sources]
+    frameworks: [SwiftUI, UIKit, Foundation, WebKit, CoreLocation]
+    swift_version: "5.0"
+
+  # Shared core (fossify-ios/commons-ios), compiled into the app as a static Swift module.
+  - name: FossifyCommons
+    type: static
+    dir: ../commons-ios
+    min_ios: "17.0"
+    sources: [Sources]
+    frameworks: [SwiftUI, UIKit, Foundation]
+    swift_version: "5.0"
